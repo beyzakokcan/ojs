@@ -14,6 +14,10 @@ Ojs\JournalBundle\Entity\MailTemplate:
           joinColumn:
             name: journal_id
             referencedColumnName: id
+        type:
+          targetEntity: Ojs\JournalBundle\Entity\MailTemplateType
+          joinColumn:
+            name: type_id
     manyToMany:
         languages:
           targetEntity: Lang
@@ -27,13 +31,6 @@ Ojs\JournalBundle\Entity\MailTemplate:
             name: mail_template_language
           fetch: EXTRA_LAZY
     fields:
-        type:
-            type: string
-            length: 255
-            column: type
-            nullable: true
-            gedmo:
-                - versioned
         lang:
             type: string
             length: 100

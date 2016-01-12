@@ -1,0 +1,15 @@
+Ojs\JournalBundle\Entity\MailTemplateType:
+  type: entity
+  table: mail_template_type
+  id:
+    id:
+      type: integer
+      id: true
+      generator:
+        strategy: AUTO
+  fields:
+    name:
+      type: string
+    fields:
+      type: json_array
+  lifecycleCallbacks: {  }
