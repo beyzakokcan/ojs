@@ -11,19 +11,30 @@ class MailTemplateType extends AbstractType
 
     /**
      * @param FormBuilderInterface $builder
-     * @param array                $options
+     * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('template', 'textarea', [
-                'label' => 'mailtemplate.template',
-                'attr' => [
-                    'style' => 'height:200px'
+            ->add(
+                'template',
+                'textarea',
+                [
+                    'label' => 'mailtemplate.template',
+                    'attr' => [
+                        'style' => 'height:200px'
                     ]
                 ]
             )
-            ->add('type', 'text', ['label' => 'mailtemplate.type'])
+            ->add(
+                'type',
+                'entity',
+                [
+                    'label' => 'mailtemplate.type',
+                    'class' => 'Ojs\JournalBundle\Entity\MailTemplateType',
+                    'choice_label' => 'name'
+                ]
+            )
             ->add('subject', 'text', ['label' => 'mailtemplate.subject'])
             ->add(
                 'lang',
