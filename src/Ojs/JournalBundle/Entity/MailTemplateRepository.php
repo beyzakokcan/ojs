@@ -12,4 +12,18 @@ use Doctrine\ORM\EntityRepository;
  */
 class MailTemplateRepository extends EntityRepository
 {
+    public function findByTemplate($type, $lang)
+    {
+        $query = $this->createQueryBuilder('m')
+            ->select('m.template')
+            ->leftJoin('m.type', 't')
+            ->andWhere('t.name = :type')
+            ->andWhere('m.lang = :lang')
+            ->setParameter('type', $type)
+            ->setParameter('lang', $lang)
+            ->setMaxResults(1)
+            ->getQuery();
+
+        return $query->getSingleScalarResult();
+    }
 }

@@ -28,7 +28,7 @@ class MailTemplate implements Translatable, JournalItemInterface
      */
     private $id;
     /**
-     * @var string
+     * @var MailTemplateType
      * @GRID\Column(field="type.name", title="mailtemplate.type")
      */
     private $type;
@@ -69,7 +69,7 @@ class MailTemplate implements Translatable, JournalItemInterface
     /**
      * Get type
      *
-     * @return string
+     * @return MailTemplateType
      */
     public function getType()
     {
