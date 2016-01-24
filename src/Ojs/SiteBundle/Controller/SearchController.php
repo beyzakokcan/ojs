@@ -58,9 +58,8 @@ class SearchController extends Controller
         //set query according to query type
         if ($queryType == 'basic') {
 
-            $fieldQuery = new Query\MultiMatch();
-            $fieldQuery->setFields(['_all']);
-            $fieldQuery->setQuery($query);
+            $fieldQuery = new Query\Prefix();
+            $fieldQuery->setPrefix('_all', $query);
             $boolQuery->addMust($fieldQuery);
         } elseif ($queryType == 'advanced') {
 
