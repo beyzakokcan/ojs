@@ -41,7 +41,7 @@ class MailTemplateType extends AbstractType
                 'entity',
                 [
                     'class' => 'Ojs\JournalBundle\Entity\Lang',
-                    'property' => 'name',
+                    'choice_label' => 'name',
                     'label' => 'mailtemplate.language',
                 ]
             );

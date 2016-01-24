@@ -6,5 +6,3 @@ Ojs\JournalBundle\Entity\MailTemplate:
             - NotBlank: ~
         subject:
             - NotBlank: ~
-        lang:
-            - NotBlank: ~

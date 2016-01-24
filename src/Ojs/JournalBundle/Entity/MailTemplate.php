@@ -3,25 +3,17 @@
 namespace Ojs\JournalBundle\Entity;
 
 use APY\DataGridBundle\Grid\Mapping as GRID;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Gedmo\Translatable\Translatable;
 use Ojs\CoreBundle\Entity\GenericEntityTrait;
 use Prezent\Doctrine\Translatable\Annotation as Prezent;
 
 /**
  * MailTemplate
- * @GRID\Source(columns="id,type.name,subject,lang")
+ * @GRID\Source(columns="id,type.name,subject,lang.name")
  */
 class MailTemplate implements Translatable, JournalItemInterface
 {
     use GenericEntityTrait;
-
-    /**
-     * @var ArrayCollection|Lang[]
-     * @GRID\Column(title="mailtemplate.languages",field="languages.code",type="array")
-     */
-    protected $languages;
     /**
      * @var integer
      * @GRID\Column(title="ID")
@@ -33,7 +25,8 @@ class MailTemplate implements Translatable, JournalItemInterface
      */
     private $type;
     /**
-     * @var string
+     * @var Lang
+     * @GRID\Column(field="lang.name", title="lang")
      */
     private $lang;
     /**
@@ -47,15 +40,8 @@ class MailTemplate implements Translatable, JournalItemInterface
     /**
      *
      * @var Journal
-     * @GRID\Column(title="journal")
      */
     private $journal;
-
-    public function __construct()
-    {
-        $this->languages = new ArrayCollection();
-    }
-
     /**
      * Get id
      *
@@ -115,7 +101,7 @@ class MailTemplate implements Translatable, JournalItemInterface
     /**
      * Get lang
      *
-     * @return string
+     * @return Lang
      */
     public function getLang()
     {
@@ -125,10 +111,10 @@ class MailTemplate implements Translatable, JournalItemInterface
     /**
      * Set lang
      *
-     * @param  string       $lang
+     * @param  Lang       $lang
      * @return MailTemplate
      */
-    public function setLang($lang)
+    public function setLang(Lang $lang)
     {
         $this->lang = $lang;
 
@@ -177,39 +163,6 @@ class MailTemplate implements Translatable, JournalItemInterface
         $this->journal = $journal;
 
         return $this;
-    }
-
-    /**
-     * Add languages
-     *
-     * @param  Lang         $languages
-     * @return MailTemplate
-     */
-    public function addLanguage(Lang $languages)
-    {
-        $this->languages[] = $languages;
-
-        return $this;
-    }
-
-    /**
-     * Remove languages
-     *
-     * @param Lang $languages
-     */
-    public function removeLanguage(Lang $languages)
-    {
-        $this->languages->removeElement($languages);
-    }
-
-    /**
-     * Get languages
-     *
-     * @return Collection
-     */
-    public function getLanguages()
-    {
-        return $this->languages;
     }
 
     /**
