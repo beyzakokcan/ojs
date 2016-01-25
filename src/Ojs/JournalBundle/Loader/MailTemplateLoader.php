@@ -2,38 +2,40 @@
 
 namespace Ojs\JournalBundle\Loader;
 
-use Doctrine\ORM\UnexpectedResultException;
-use Ojs\JournalBundle\Entity\Journal;
 use Ojs\JournalBundle\Entity\MailTemplateRepository;
 use Ojs\JournalBundle\Service\JournalService;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class MailTemplateLoader implements \Twig_LoaderInterface
 {
-    /** @var Journal */
-    protected $journal;
+    /** @var JournalService */
+    protected $journalService;
 
     /** @var MailTemplateRepository */
     protected $repository;
 
     protected $cachePrefix;
 
+    /** @var RequestStack */
+    protected $requestStack;
+
     /**
      * MailTemplateLoader constructor.
-     * @param JournalService $journalService
      * @param MailTemplateRepository $repository
-     * @param string $cachePrefix
+     * @param RequestStack           $requestStack
+     * @param JournalService         $journalService
+     * @param string                 $cachePrefix
      */
     public function __construct(
-        JournalService $journalService,
         MailTemplateRepository $repository,
+        RequestStack $requestStack,
+        JournalService $journalService,
         $cachePrefix = 'Mail'
     ) {
         $this->repository = $repository;
+        $this->requestStack = $requestStack;
+        $this->journalService = $journalService;
         $this->cachePrefix = $cachePrefix;
-        if ($journal = $journalService->getSelectedJournal()) {
-            $this->cachePrefix .= $journal->getId();
-            $this->journal = $journal;
-        }
     }
 
     public function getSource($name)
@@ -41,15 +43,45 @@ class MailTemplateLoader implements \Twig_LoaderInterface
         if (strpos($name, $this->cachePrefix, 0) !== 0) {
             throw new \Twig_Error_Loader(sprintf('The "%s" template is not mail template', $name));
         }
+
         $parts = explode(':', $name);
         $templateType = $parts[1];
-        $lang = $parts[2];
 
-        try {
-            return $this->repository->findByTemplate($templateType, $lang);
-        } catch (UnexpectedResultException $e) {
+        $templates = $this->repository->findTemplatesByType($templateType);
+        if (empty($templates)) {
             throw new \Twig_Error_Loader(sprintf('The "%s" template is not found', $name));
         }
+        if (count($templates) === 1) {
+            return $templates[0]['template'];
+        }
+        $preferredLangCodes = $this->preferredLangCodes();
+
+        foreach ($preferredLangCodes as $preferredLangCode) {
+            foreach ($templates as $template) {
+                if ($template['code'] === $preferredLangCode) {
+                    return $template['template'];
+                }
+            }
+        }
+
+        return $templates[0]['template'];
+    }
+
+    /**
+     * @return array
+     */
+    public function preferredLangCodes()
+    {
+        $request = $this->requestStack->getCurrentRequest();
+
+        $codes = [];
+        $codes[] = $request->getLocale();
+        if ($journal = $this->journalService->getSelectedJournal()) {
+            $codes[] = $journal->getMandatoryLang()->getCode();
+        }
+        $codes[] = $request->getDefaultLocale();
+
+        return $codes;
     }
 
     public function getCacheKey($name)

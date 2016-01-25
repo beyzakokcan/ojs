@@ -18,10 +18,11 @@ services:
   ojs.twig_mail_template_loader:
     class: Ojs\JournalBundle\Loader\MailTemplateLoader
     arguments:
-      - "@ojs.journal_service"
       - "@ojs.mail_template_repository"
+      - "@request_stack"
+      - "@ojs.journal_service"
     tags:
-        - { name: twig.loader }
+      - { name: twig.loader }
 
   journal.orm_event_listener:
     class: Ojs\JournalBundle\Listeners\AclOrmListener
